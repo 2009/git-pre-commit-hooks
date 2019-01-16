@@ -1,0 +1,19 @@
+#!/bin/bash
+
+files=$(git diff --cached --name-only | tr '\n' ' ')
+[ -z "$files" ] && exit 0
+
+for f in $files; do
+  if grep --color --with-filename -n "<<<<<<" $f; then
+    echo "Error commiting changes: Please fix failed merge"
+    exit 1
+  fi
+  #if grep --color --with-filename -n "======" $f; then
+  #  echo "Error commiting changes: Please fix failed merge"
+  #  exit 1
+  #fi
+  if grep --color --with-filename -n ">>>>>>" $f; then
+    echo "Error commiting changes: Please fix failed merge"
+    exit 1
+  fi
+done

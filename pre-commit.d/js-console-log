@@ -1,0 +1,20 @@
+#!/bin/bash
+
+jsfiles=$(git diff --cached --name-only --diff-filter=ACM "*.js" "*.jsx" | tr '\n' ' ')
+[ -z "$jsfiles" ] && exit 0
+
+# enable user input
+exec < /dev/tty
+
+for f in $jsfiles; do
+  if grep --color --with-filename -n "console.log" $f; then
+    read -p "Occurrences of console.log found. Would like to commit these? (y/n) " should_continue
+    echo $should_continue | grep -q ^[Yy]$
+    if [ $? -eq 0 ]
+    then
+      exit 0; # Commit
+    else
+      exit 1; # Exit
+    fi
+  fi
+done

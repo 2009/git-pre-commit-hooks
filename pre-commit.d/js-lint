@@ -1,0 +1,18 @@
+#!/bin/bash
+
+jsfiles=$(git diff --cached --name-only --diff-filter=ACM "*.js" "*.jsx" | tr '\n' ' ')
+[ -z "$jsfiles" ] && exit 0
+
+# Check for npx
+which npx &> /dev/null
+if [[ "$?" == 1 ]]; then
+  echo "Please install npx: yarn global add npx"
+  exit 1
+fi
+
+for f in $jsfiles; do
+  # npx will install our depencies for us
+  if ! npx eslint "$f"; then
+    exit 1
+  fi
+done
