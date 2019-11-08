@@ -1,0 +1,1 @@
+../shared/rails-automigrate.rb

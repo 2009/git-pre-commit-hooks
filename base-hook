@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# This script should be saved in a git repo as a hook file, e.g. .git/hooks/pre-receive.
-# It looks for scripts in the .git/hooks/pre-receive.d directory and executes them in order,
+# This script should be saved in a git repo as a hook file, e.g. .git/hooks/<hook-name>.
+# It looks for scripts in the .git/hooks/<hook-name>.d directory and executes them in order,
 # passing along stdin. If any script exits with a non-zero status, this script exits.
 
 script_dir=$(dirname $0)

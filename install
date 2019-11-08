@@ -1,0 +1,46 @@
+#!/bin/bash
+#====================================================================
+# Run ./install inside a git repositories root directory and follow
+# the prompts.
+#====================================================================
+
+# enable user input
+exec < /dev/tty
+
+# Skip non-git directories
+if [ ! -d "${PWD}/.git" ]; then
+  echo "Current directory does not contain a .git directory!"
+  exit 1;
+fi
+
+# FIXME allow setting INSTALL_ALL from outside this script
+INSTALL_ALL=0
+SCRIPT_DIR=$(dirname "$(stat -f "$0")")
+HOOKS=(
+  "post-checkout"
+  "post-merge"
+  "pre-commit"
+)
+
+for hook in ${HOOKS[@]}; do
+  working_hook_dir="${PWD}/.git/hooks/$hook.d"
+  mkdir -p $working_hook_dir
+  cp -i "$SCRIPT_DIR/base-hook" "${PWD}/.git/hooks/$hook"
+
+  for filename in $SCRIPT_DIR/$hook.d/*; do
+    should_install=0
+
+    # Prompt for isntall if we are not isntall all hooks
+    if [ $INSTALL_ALL -eq 0 ]; then
+      read -p "Install $filename? (y/n) [y] " response
+      if [[ $response =~ ^(yes|y|Y| ) ]] || [[ -z $response ]]; then
+        should_install=1
+      fi
+    fi
+
+    if [ $should_install -eq 1 ] || [ $INSTALL_ALL -eq 1 ]; then
+      # Install hook
+      cp -f $filename "$working_hook_dir/"
+    fi
+  done
+done

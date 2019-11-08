@@ -5,6 +5,8 @@
 yarn global add npx
 ```
 
-#### TODO
-
-* [ ] Add script to automatically add pre-commit hooks to a repo
+```bash
+# Install hooks
+cd ~/dev/my-repository
+~/dev/git-pre-commit-hooks/install
+```
