@@ -2,7 +2,7 @@
 
 unset GIT_LITERAL_PATHSPECS
 
-jsfiles=$(git diff --cached --name-only --diff-filter=ACM "*.js" "*.jsx" | tr '\n' ' ')
+jsfiles=$(git diff --cached --name-only --diff-filter=ACM "*.js" "*.jsx" "*.ts" "*.tsx" | tr '\n' ' ')
 [ -z "$jsfiles" ] && exit 0
 
 # Check for npx
