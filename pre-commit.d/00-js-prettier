@@ -1,0 +1,37 @@
+#!/bin/bash
+
+unset GIT_LITERAL_PATHSPECS
+
+jsfiles=$(git diff --cached --name-only --diff-filter=ACM "*.js" "*.jsx" "*.ts" "*.tsx" | tr '\n' ' ')
+[ -z "$jsfiles" ] && exit 0
+
+# Check for npx
+which npx &> /dev/null
+if [[ "$?" == 1 ]]; then
+  echo "Please install npx: yarn global add npx"
+  exit 1
+fi
+
+for f in $jsfiles; do
+  # Temporarily stash any unstaged changes
+  git stash push --keep-index -q
+
+  if ! npx prettier -w "$f"; then
+    echo "Prettier failed on $f"
+
+    # Restore unstaged changes before exiting
+    git stash pop -q
+    exit 1
+  fi
+
+  # Add the formatted changes
+  git add "$f"
+
+  # Restore the unstaged changes
+  git stash pop -q
+
+  if [[ "$?" != 0 ]]; then
+    echo "Error restoring unstaged changes for $f"
+    exit 1
+  fi
+done
